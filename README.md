@@ -169,8 +169,7 @@ The `IIconProvider.Prefix` property has to be unique within all registered provi
 
 The major version tracks Avalonia (e.g. `12.x.y` for Avalonia 12). Minor and patch versions are for library changes.
 
-1. Bump `<Version>` in [`src/Directory.Build.props`](src/Directory.Build.props)
-2. Commit and push to `main`
-3. Tag the release: `git tag -a v12.0.1 -m "v12.0.1"` (match the version you set)
-4. Push the tag: `git push origin v12.0.1`
-5. The [release workflow](.github/workflows/release.yml) packs and publishes all three packages to nuget.org automatically
+1. Tag the release: `git tag -a v12.0.1 -m "v12.0.1"`
+2. Push the tag: `git push origin v12.0.1`
+
+The [release workflow](.github/workflows/release.yml) extracts the version from the tag, packs all three packages with it, and publishes to nuget.org. No need to edit version numbers in source files.
