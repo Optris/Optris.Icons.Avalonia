@@ -37,16 +37,23 @@ jobs:
 
       - name: 🟣 Setup .NET
         uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            8.0.x
+            9.0.x
+            10.0.x
 
       - name: 📦 Pack
-        run: >
-          dotnet pack
-          --configuration Release
+        run: |
+          dotnet pack Projektanker.Icons.Avalonia/Projektanker.Icons.Avalonia.csproj -c Release -o ../artifacts
+          dotnet pack Projektanker.Icons.Avalonia.FontAwesome/Projektanker.Icons.Avalonia.FontAwesome.csproj -c Release -o ../artifacts
+          dotnet pack Projektanker.Icons.Avalonia.MaterialDesign/Projektanker.Icons.Avalonia.MaterialDesign.csproj -c Release -o ../artifacts
 
       - name: 🚀 Push
+        working-directory: artifacts
         run: >
           dotnet nuget push
-          **.nupkg
+          *.nupkg
           -k ${{ secrets.nuget_api_key }}
           -s https://api.nuget.org/v3/index.json
           --skip-duplicate

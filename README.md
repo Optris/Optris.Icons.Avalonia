@@ -1,4 +1,12 @@
-# Icons.Avalonia
+# Optris.Icons.Avalonia
+
+> **Optris-maintained fork.** The [original Projektanker.Icons.Avalonia](https://github.com/Projektanker/Icons.Avalonia) is unmaintained — Projektanker GmbH has been dissolved and PRs to the upstream repo will not be reviewed. Optris GmbH has adopted this project to keep it alive for the Avalonia community, starting with an Avalonia 12 port.
+>
+> Published to NuGet as **`Optris.Icons.Avalonia`**, **`Optris.Icons.Avalonia.FontAwesome`**, and **`Optris.Icons.Avalonia.MaterialDesign`**. The C# namespace has been renamed from `Projektanker.Icons.Avalonia` to `Optris.Icons.Avalonia` (the `Projektanker` name was misleading post-dissolution). The XAML XML namespace URL `https://github.com/projektanker/icons.avalonia` is preserved as an opaque identifier so existing consumer XAML keeps working without changes.
+>
+> **Repository:** https://github.com/Optris/Optris.Icons.Avalonia
+
+---
 
 A library to easily display icons in an Avalonia App.
 
