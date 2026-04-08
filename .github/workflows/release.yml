@@ -1,0 +1,41 @@
+name: 📦 Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+defaults:
+  run:
+    working-directory: src
+
+jobs:
+  release:
+    name: 📦 Pack & Publish
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            8.0.x
+            9.0.x
+            10.0.x
+
+      - name: Pack
+        run: |
+          dotnet pack Projektanker.Icons.Avalonia/Projektanker.Icons.Avalonia.csproj -c Release -o ../artifacts
+          dotnet pack Projektanker.Icons.Avalonia.FontAwesome/Projektanker.Icons.Avalonia.FontAwesome.csproj -c Release -o ../artifacts
+          dotnet pack Projektanker.Icons.Avalonia.MaterialDesign/Projektanker.Icons.Avalonia.MaterialDesign.csproj -c Release -o ../artifacts
+
+      - name: Push to NuGet
+        working-directory: artifacts
+        run: dotnet nuget push "*.nupkg" --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET_API_KEY }} --skip-duplicate
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: nupkg
+          path: artifacts/*.nupkg
