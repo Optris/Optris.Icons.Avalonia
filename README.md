@@ -4,7 +4,6 @@
 >
 > Published to NuGet as **`Optris.Icons.Avalonia`**, **`Optris.Icons.Avalonia.FontAwesome`**, and **`Optris.Icons.Avalonia.MaterialDesign`**. The C# namespace has been renamed from `Projektanker.Icons.Avalonia` to `Optris.Icons.Avalonia` (the `Projektanker` name was misleading post-dissolution). The XAML XML namespace URL `https://github.com/projektanker/icons.avalonia` is preserved as an opaque identifier so existing consumer XAML keeps working without changes.
 >
-> **Repository:** https://github.com/Optris/Optris.Icons.Avalonia
 
 ---
 
