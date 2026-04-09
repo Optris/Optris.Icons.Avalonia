@@ -6,12 +6,9 @@
 		xmlns:vm="clr-namespace:Demo"
 		mc:Ignorable="d" x:Class="Demo.MainView">
 
-	<TabControl>
+	<TabControl Name="MainTabs">
 		<!-- Icon Browser Tab -->
 		<TabItem Header="Icon Browser">
-			<TabItem.DataContext>
-				<vm:IconBrowserViewModel />
-			</TabItem.DataContext>
 			<DockPanel x:DataType="vm:IconBrowserViewModel" KeyDown="OnKeyDown" Focusable="True">
 				<!-- Top search bar -->
 				<Grid DockPanel.Dock="Top" ColumnDefinitions="*,Auto" Margin="8">

@@ -1,3 +1,5 @@
+using System;
+using System.Runtime.InteropServices;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Input.Platform;
@@ -14,6 +16,29 @@ public partial class MainView : UserControl
     public MainView()
     {
         InitializeComponent();
+
+        var tabs = this.FindControl<TabControl>("MainTabs")!;
+
+        if (OperatingSystem.IsBrowser())
+        {
+            // Default to Showcase on browser — Icon Browser is heavy in WASM
+            tabs.SelectedIndex = 1;
+        }
+
+        tabs.SelectionChanged += (_, _) =>
+        {
+            // Lazily create IconBrowserViewModel on first tab switch
+            if (tabs.SelectedIndex == 0 && tabs.Items[0] is TabItem browserTab && browserTab.DataContext is null)
+            {
+                browserTab.DataContext = new IconBrowserViewModel();
+            }
+        };
+
+        // On desktop, eagerly initialize
+        if (!OperatingSystem.IsBrowser() && tabs.Items[0] is TabItem tab)
+        {
+            tab.DataContext = new IconBrowserViewModel();
+        }
     }
 
     private void InitializeComponent()
