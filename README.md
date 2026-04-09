@@ -42,7 +42,7 @@ Install the core package and at least one icon provider. You only need the packs
 
 ## Quick start
 
-A full example is available in the [Demo project](src/Demo/) ([live](https://optris.github.io/Optris.Icons.Avalonia/)). For a detailed walkthrough, see the [Getting Started guide](docs/getting-started.md).
+A full example is available in the [Demo project](src/Demo/) ([live](https://optris.github.io/Optris.Icons.Avalonia/)). For a detailed walkthrough, see the [Getting Started guide](https://github.com/Optris/Optris.Icons.Avalonia/wiki/Getting-Started).
 
 ### 1. Register icon providers on app start up
 
@@ -161,18 +161,18 @@ IconProvider.Current.Register(provider);
 
 The `IIconProvider.Prefix` property has to be unique within all registered providers. It is used to select the right provider. E.g. `FontAwesomeIconProvider`'s prefix is `fa`.
 
-For a complete guide, see [Custom Providers](docs/custom-providers.md).
+For a complete guide, see [Custom Providers](https://github.com/Optris/Optris.Icons.Avalonia/wiki/Custom-Providers).
 
 ## Documentation
 
-Browse the full **[documentation](docs/README.md)**, or jump to a specific page:
+Browse the full **[documentation on the Wiki](https://github.com/Optris/Optris.Icons.Avalonia/wiki)**, or jump to a specific page:
 
-- [Getting Started](docs/getting-started.md) — installation, setup, first icon
-- [Usage Guide](docs/usage-guide.md) — controls, attached properties, animations, styling, data binding
-- [Icon Packs](docs/icon-packs.md) — Font Awesome & Material Design reference, browse icons
-- [Custom Providers](docs/custom-providers.md) — implement your own icon source
-- [API Reference](docs/api-reference.md) — classes, interfaces, and model types
-- [Troubleshooting](docs/troubleshooting.md) — common errors and fixes
+- [Getting Started](https://github.com/Optris/Optris.Icons.Avalonia/wiki/Getting-Started) — installation, setup, first icon
+- [Usage Guide](https://github.com/Optris/Optris.Icons.Avalonia/wiki/Usage-Guide) — controls, attached properties, animations, styling, data binding
+- [Icon Packs](https://github.com/Optris/Optris.Icons.Avalonia/wiki/Icon-Packs) — Font Awesome & Material Design reference, browse icons
+- [Custom Providers](https://github.com/Optris/Optris.Icons.Avalonia/wiki/Custom-Providers) — implement your own icon source
+- [API Reference](https://github.com/Optris/Optris.Icons.Avalonia/wiki/API-Reference) — classes, interfaces, and model types
+- [Troubleshooting](https://github.com/Optris/Optris.Icons.Avalonia/wiki/Troubleshooting) — common errors and fixes
 
 ## Contributing
 
