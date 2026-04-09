@@ -1,27 +1,26 @@
-﻿using Avalonia;
+using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 
-namespace Demo
+namespace Demo;
+
+public class App : Application
 {
-    public class App : Application
+    public override void Initialize()
     {
-        public override void Initialize()
-        {
-            AvaloniaXamlLoader.Load(this);
+        AvaloniaXamlLoader.Load(this);
 #if DEBUG
-            this.AttachDeveloperTools();
+        this.AttachDeveloperTools();
 #endif
-        }
+    }
 
-        public override void OnFrameworkInitializationCompleted()
+    public override void OnFrameworkInitializationCompleted()
+    {
+        if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
-            {
-                desktop.MainWindow = new MainWindow();
-            }
-
-            base.OnFrameworkInitializationCompleted();
+            desktop.MainWindow = new MainWindow();
         }
+
+        base.OnFrameworkInitializationCompleted();
     }
 }

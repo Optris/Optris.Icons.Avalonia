@@ -1,12 +1,11 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using Optris.Icons.Avalonia.FontAwesome.Models;
 
-namespace Optris.Icons.Avalonia.FontAwesome
+namespace Optris.Icons.Avalonia.FontAwesome;
+
+[JsonSourceGenerationOptions(PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase)]
+[JsonSerializable(typeof(Dictionary<string, FontAwesomeIcon>))]
+internal partial class FontAwesomeIconsJsonContext : JsonSerializerContext
 {
-    [JsonSourceGenerationOptions(PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase)]
-    [JsonSerializable(typeof(Dictionary<string, FontAwesomeIcon>))]
-    internal partial class FontAwesomeIconsJsonContext : JsonSerializerContext
-    {
-    }
 }

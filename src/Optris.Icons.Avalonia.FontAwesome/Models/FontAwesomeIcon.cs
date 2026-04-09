@@ -1,9 +1,8 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 
-namespace Optris.Icons.Avalonia.FontAwesome.Models
+namespace Optris.Icons.Avalonia.FontAwesome.Models;
+
+internal class FontAwesomeIcon
 {
-    internal class FontAwesomeIcon
-    {
-        public Dictionary<Style, Svg> Svg { get; set; }
-    }
+    public Dictionary<Style, Svg> Svg { get; set; }
 }
