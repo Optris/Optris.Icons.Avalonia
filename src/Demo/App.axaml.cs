@@ -13,7 +13,8 @@ public class App : Application
     {
         AvaloniaXamlLoader.Load(this);
 #if DEBUG
-        this.AttachDeveloperTools();
+        if (!OperatingSystem.IsBrowser())
+            this.AttachDeveloperTools();
 #endif
     }
 
