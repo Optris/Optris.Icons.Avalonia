@@ -30,9 +30,9 @@ jobs:
 
       - name: Pack
         run: |
-          dotnet pack Projektanker.Icons.Avalonia/Projektanker.Icons.Avalonia.csproj -c Release -o ../artifacts -p:Version=${{ steps.version.outputs.value }}
-          dotnet pack Projektanker.Icons.Avalonia.FontAwesome/Projektanker.Icons.Avalonia.FontAwesome.csproj -c Release -o ../artifacts -p:Version=${{ steps.version.outputs.value }}
-          dotnet pack Projektanker.Icons.Avalonia.MaterialDesign/Projektanker.Icons.Avalonia.MaterialDesign.csproj -c Release -o ../artifacts -p:Version=${{ steps.version.outputs.value }}
+          dotnet pack Optris.Icons.Avalonia/Optris.Icons.Avalonia.csproj -c Release -o ../artifacts -p:Version=${{ steps.version.outputs.value }}
+          dotnet pack Optris.Icons.Avalonia.FontAwesome/Optris.Icons.Avalonia.FontAwesome.csproj -c Release -o ../artifacts -p:Version=${{ steps.version.outputs.value }}
+          dotnet pack Optris.Icons.Avalonia.MaterialDesign/Optris.Icons.Avalonia.MaterialDesign.csproj -c Release -o ../artifacts -p:Version=${{ steps.version.outputs.value }}
 
       - name: Push to NuGet
         working-directory: artifacts

@@ -15,7 +15,7 @@
         <PackageReference Include="Avalonia.Themes.Simple" Version="12.0.0" />
     </ItemGroup>
     <ItemGroup>
-        <ProjectReference Include="..\Projektanker.Icons.Avalonia.FontAwesome\Projektanker.Icons.Avalonia.FontAwesome.csproj" />
-        <ProjectReference Include="..\Projektanker.Icons.Avalonia.MaterialDesign\Projektanker.Icons.Avalonia.MaterialDesign.csproj" />
+        <ProjectReference Include="..\Optris.Icons.Avalonia.FontAwesome\Optris.Icons.Avalonia.FontAwesome.csproj" />
+        <ProjectReference Include="..\Optris.Icons.Avalonia.MaterialDesign\Optris.Icons.Avalonia.MaterialDesign.csproj" />
     </ItemGroup>
 </Project>

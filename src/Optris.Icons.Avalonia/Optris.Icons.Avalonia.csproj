@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <Description>Optris-maintained fork of Projektanker.Icons.Avalonia, ported to Avalonia 12. A library to easily display icons in an Avalonia App.</Description>
+        <Description>A library to easily display icons in an Avalonia App.</Description>
         <AvaloniaNameGeneratorIsEnabled>false</AvaloniaNameGeneratorIsEnabled>
         <TargetFramework></TargetFramework>
         <TargetFrameworks>net8.0;net9.0;net10.0</TargetFrameworks>

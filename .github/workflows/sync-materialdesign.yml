@@ -6,7 +6,7 @@ on:
     - cron: "0 3 * * 0"
 defaults:
   run:
-    working-directory: src/Projektanker.Icons.Avalonia.MaterialDesign
+    working-directory: src/Optris.Icons.Avalonia.MaterialDesign
 
 jobs:
   sync:
