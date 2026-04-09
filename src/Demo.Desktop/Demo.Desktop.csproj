@@ -7,6 +7,7 @@
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="Avalonia.Desktop" Version="12.0.0" />
+        <PackageReference Include="Tmds.DBus.Protocol" Version="0.92.0" />
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\Demo\Demo.csproj" />
