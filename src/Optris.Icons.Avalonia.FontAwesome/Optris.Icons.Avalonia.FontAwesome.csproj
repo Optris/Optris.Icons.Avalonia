@@ -11,10 +11,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="System.Text.Json" Version="10.0.5" />
-    </ItemGroup>
-
-    <ItemGroup>
         <ProjectReference Include="..\Optris.Icons.Avalonia\Optris.Icons.Avalonia.csproj" />
     </ItemGroup>
     <ItemGroup>
