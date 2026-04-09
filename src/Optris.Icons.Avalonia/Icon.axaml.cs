@@ -51,8 +51,7 @@ namespace Optris.Icons.Avalonia
             base.OnPropertyChanged(change);
             if (change.Property == ValueProperty || change.Property == ForegroundProperty)
             {
-                // Create new IconImage to prevent https://github.com/Projektanker/Icons.Avalonia/issues/138
-                // Otherwise the Image.Draw method is not invoked
+                // Create new IconImage so that Image.Draw is invoked
                 Image = new IconImage(Value, Foreground ?? _fallbackForeground);
             }
         }
