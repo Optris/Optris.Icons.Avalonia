@@ -9,6 +9,8 @@
 
 A library to easily display icons in an Avalonia App.
 
+**[Live Demo](https://optris.github.io/Optris.Icons.Avalonia/)** — try it in your browser
+
 [![🧪 Test](https://github.com/Optris/Optris.Icons.Avalonia/actions/workflows/push.yml/badge.svg)](https://github.com/Optris/Optris.Icons.Avalonia/actions/workflows/push.yml)
 [![🔄 Sync FontAwesome](https://github.com/Optris/Optris.Icons.Avalonia/actions/workflows/sync-fontawesome.yml/badge.svg)](https://github.com/Optris/Optris.Icons.Avalonia/actions/workflows/sync-fontawesome.yml)
 [![🔄 Sync Material Design](https://github.com/Optris/Optris.Icons.Avalonia/actions/workflows/sync-materialdesign.yml/badge.svg)](https://github.com/Optris/Optris.Icons.Avalonia/actions/workflows/sync-materialdesign.yml)
@@ -30,7 +32,7 @@ A library to easily display icons in an Avalonia App.
 
 ## Usage
 
-A full example is available in the [Demo project](src/Demo/Demo.csproj).
+A full example is available in the [Demo project](src/Demo/) ([live](https://optris.github.io/Optris.Icons.Avalonia/)).
 
 ### 1. Register icon providers on app start up
 
