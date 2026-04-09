@@ -48,7 +48,7 @@
 				</Border>
 
 				<!-- Icon grid (virtualized via ItemsRepeater) -->
-				<ScrollViewer>
+				<ScrollViewer KeyDown="OnKeyDown">
 					<ItemsRepeater ItemsSource="{Binding FilteredIcons}">
 						<ItemsRepeater.Layout>
 							<UniformGridLayout MinItemWidth="130"
@@ -58,7 +58,7 @@
 						</ItemsRepeater.Layout>
 						<ItemsRepeater.ItemTemplate>
 							<DataTemplate x:DataType="vm:IconEntry">
-								<Border Background="Transparent"
+								<Border Classes="iconTile"
 										CornerRadius="4"
 										Padding="4"
 										Tapped="OnIconTapped"
@@ -234,6 +234,15 @@
 			<Setter Property="Grid.Column" Value="1" />
 			<Setter Property="Width" Value="24" />
 			<Setter Property="Height" Value="24" />
+		</Style>
+		<Style Selector="Border.iconTile">
+			<Setter Property="Background" Value="Transparent" />
+		</Style>
+		<Style Selector="Border.iconTile:pointerover">
+			<Setter Property="Background" Value="{DynamicResource SystemControlHighlightListLowBrush}" />
+		</Style>
+		<Style Selector="Border.iconTile.selected">
+			<Setter Property="Background" Value="{DynamicResource SystemControlHighlightListAccentMediumBrush}" />
 		</Style>
 	</UserControl.Styles>
 </UserControl>

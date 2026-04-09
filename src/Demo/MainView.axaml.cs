@@ -9,6 +9,8 @@ namespace Demo;
 
 public partial class MainView : UserControl
 {
+    private Border _selectedBorder;
+
     public MainView()
     {
         InitializeComponent();
@@ -21,12 +23,30 @@ public partial class MainView : UserControl
 
     private void OnIconTapped(object sender, TappedEventArgs e)
     {
-        if (sender is Control { Tag: IconEntry entry } control)
+        if (sender is Border { Tag: IconEntry entry } border)
         {
-            var dock = control.FindAncestorOfType<DockPanel>();
+            var dock = border.FindAncestorOfType<DockPanel>();
             if (dock?.DataContext is IconBrowserViewModel vm)
             {
                 vm.SelectedIcon = entry;
+                SetSelectedBorder(border);
+            }
+        }
+    }
+
+    private async void OnKeyDown(object sender, KeyEventArgs e)
+    {
+        if (e.Key == Key.C && e.KeyModifiers == KeyModifiers.Control)
+        {
+            var dock = (sender as Control)?.FindAncestorOfType<DockPanel>();
+            if (dock?.DataContext is IconBrowserViewModel { SelectedIcon: { } icon })
+            {
+                var clipboard = TopLevel.GetTopLevel(this)?.Clipboard;
+                if (clipboard is not null)
+                {
+                    await clipboard.SetTextAsync(icon.Key);
+                    e.Handled = true;
+                }
             }
         }
     }
@@ -45,5 +65,12 @@ public partial class MainView : UserControl
                 await clipboard.SetTextAsync(icon.Key);
             }
         }
+    }
+
+    private void SetSelectedBorder(Border border)
+    {
+        _selectedBorder?.Classes.Remove("selected");
+        border.Classes.Add("selected");
+        _selectedBorder = border;
     }
 }
