@@ -38,8 +38,7 @@ public partial class MainView : UserControl
     {
         if (e.Key == Key.C && e.KeyModifiers == KeyModifiers.Control)
         {
-            var dock = (sender as Control)?.FindAncestorOfType<DockPanel>();
-            if (dock?.DataContext is IconBrowserViewModel { SelectedIcon: { } icon })
+            if (sender is DockPanel { DataContext: IconBrowserViewModel { SelectedIcon: { } icon } })
             {
                 var clipboard = TopLevel.GetTopLevel(this)?.Clipboard;
                 if (clipboard is not null)
