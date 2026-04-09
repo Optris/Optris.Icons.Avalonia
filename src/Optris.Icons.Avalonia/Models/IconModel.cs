@@ -1,4 +1,3 @@
-﻿namespace Optris.Icons.Avalonia.Models
-{
-    public record IconModel(ViewBoxModel ViewBox, PathModel Path);
-}
+namespace Optris.Icons.Avalonia.Models;
+
+public record IconModel(ViewBoxModel ViewBox, PathModel Path);

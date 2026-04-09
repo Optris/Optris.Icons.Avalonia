@@ -2,6 +2,7 @@
     <PropertyGroup>
         <TargetFramework>net8.0</TargetFramework>
 		<LangVersion>10</LangVersion>
+        <Deterministic>true</Deterministic>
         <Authors>Optris GmbH, original by Sebastian Rumohr (Projektanker GmbH)</Authors>
         <Company>Optris GmbH</Company>
         <PackageProjectUrl>https://github.com/Optris/Optris.Icons.Avalonia</PackageProjectUrl>

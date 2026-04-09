@@ -1,7 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <Description>A library to easily display Material Design icons in an Avalonia App.</Description>
-        <TargetFramework></TargetFramework>
         <TargetFrameworks>net8.0;net9.0;net10.0</TargetFrameworks>
         <PackageId>Optris.Icons.Avalonia.MaterialDesign</PackageId>
         <AssemblyName>Optris.Icons.Avalonia.MaterialDesign</AssemblyName>

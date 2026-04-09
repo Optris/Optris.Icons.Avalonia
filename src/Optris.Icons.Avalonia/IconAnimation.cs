@@ -1,9 +1,8 @@
-﻿namespace Optris.Icons.Avalonia
+namespace Optris.Icons.Avalonia;
+
+public enum IconAnimation
 {
-    public enum IconAnimation
-    {
-        None,
-        Spin,
-        Pulse
-    }
+    None,
+    Spin,
+    Pulse
 }

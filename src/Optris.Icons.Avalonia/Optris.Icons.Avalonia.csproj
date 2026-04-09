@@ -2,7 +2,6 @@
     <PropertyGroup>
         <Description>A library to easily display icons in an Avalonia App.</Description>
         <AvaloniaNameGeneratorIsEnabled>false</AvaloniaNameGeneratorIsEnabled>
-        <TargetFramework></TargetFramework>
         <TargetFrameworks>net8.0;net9.0;net10.0</TargetFrameworks>
         <PackageId>Optris.Icons.Avalonia</PackageId>
         <AssemblyName>Optris.Icons.Avalonia</AssemblyName>

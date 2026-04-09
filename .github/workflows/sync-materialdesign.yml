@@ -4,6 +4,11 @@ on:
   workflow_dispatch:
   schedule:
     - cron: "0 3 * * 0"
+
+permissions:
+  contents: write
+  pull-requests: write
+
 defaults:
   run:
     working-directory: src/Optris.Icons.Avalonia.MaterialDesign

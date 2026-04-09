@@ -1,13 +1,12 @@
-﻿namespace Optris.Icons.Avalonia
+namespace Optris.Icons.Avalonia;
+
+/// <summary>
+/// Represents an icon provider.
+/// </summary>
+public interface IIconProvider : IIconReader
 {
     /// <summary>
-    /// Represents an icon provider.
+    /// Gets the prefix of the <see cref="IIconProvider"/>.
     /// </summary>
-    public interface IIconProvider : IIconReader
-    {
-        /// <summary>
-        /// Gets the prefix of the <see cref="IIconProvider"/>.
-        /// </summary>
-        string Prefix { get; }
-    }
+    string Prefix { get; }
 }
