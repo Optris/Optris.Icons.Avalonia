@@ -2,6 +2,8 @@
     <PropertyGroup>
 		<LangVersion>latest</LangVersion>
         <Deterministic>true</Deterministic>
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
         <Authors>Optris GmbH, original by Sebastian Rumohr (Projektanker GmbH)</Authors>
         <Company>Optris GmbH</Company>
         <PackageProjectUrl>https://github.com/Optris/Optris.Icons.Avalonia</PackageProjectUrl>
