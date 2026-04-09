@@ -1,0 +1,56 @@
+name: Deploy to GitHub Pages
+
+env:
+  PROJECT_PATH: src/Demo.Browser/Demo.Browser.csproj
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy-to-github-pages:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Install wasm-tools
+        run: dotnet workload install wasm-tools
+
+      - name: Publish .NET Project
+        run: dotnet publish $PROJECT_PATH -c Release -o release --nologo
+
+      - name: Clean up _framework for static hosting
+        run: |
+          cd release/wwwroot/_framework
+          # Remove pre-compressed files (GitHub Pages handles compression)
+          rm -f *.br *.gz
+          # Strip fingerprint hashes: Name.HASH.ext -> Name.ext
+          for f in *.*.*; do
+            if [ -f "$f" ]; then
+              base=$(echo "$f" | sed -E 's/\.[a-z0-9]{10,}\.(wasm|js|dat)$/.\1/')
+              if [ "$base" != "$f" ]; then
+                cp "$f" "$base"
+              fi
+            fi
+          done
+
+      - name: Remove pre-compressed files from root
+        run: rm -f release/wwwroot/*.br release/wwwroot/*.gz
+
+      - name: copy index.html to 404.html
+        run: cp release/wwwroot/index.html release/wwwroot/404.html
+
+      - name: Add .nojekyll file
+        run: touch release/wwwroot/.nojekyll
+
+      - name: Uploading files to gh-pages branch
+        uses: JamesIves/github-pages-deploy-action@v4.7.3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: gh-pages
+          folder: release/wwwroot
