@@ -1,0 +1,54 @@
+name: 🔄 Fontawesome 7
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 3 * * 0"
+defaults:
+  run:
+    working-directory: src/Optris.Icons.Avalonia.FontAwesome7
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  sync:
+    name: 🔄 Sync Fontawesome 7
+    runs-on: ubuntu-latest
+    outputs:
+      modified: ${{ steps.git-check.outputs.modified }}
+    steps:
+      - name: 🛒 Checkout
+        uses: actions/checkout@v6
+
+      - name: 📥 Download icons.json
+        run: wget -O Assets/icons.json https://raw.githubusercontent.com/FortAwesome/Font-Awesome/7.x/metadata/icons.json
+
+      - name: ℹ git status
+        run: git status
+
+      - name: 🔎 Check for modified files
+        id: git-check
+        run: echo modified=$([ -z "`git status --porcelain`" ] && echo "false" || echo "true") >> $GITHUB_OUTPUT
+
+      - name: 🟣 Setup .NET
+        if: ${{ steps.git-check.outputs.modified == 'true' }}
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: |
+            8.0.x
+            9.0.x
+            10.0.x
+
+      - name: 🧪 dotnet test
+        if: ${{ steps.git-check.outputs.modified == 'true' }}
+        run: dotnet test --configuration Release
+
+      - name: 💬 Create Pull Request
+        if: ${{ steps.git-check.outputs.modified == 'true' }}
+        uses: peter-evans/create-pull-request@v8
+        with:
+          branch: fontawesome7
+          commit-message: "FontAwesome 7 icons changed."
+          title: "feat(FontAwesome7): 🔄 icons changed."
