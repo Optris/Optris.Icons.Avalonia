@@ -10,11 +10,12 @@ namespace Optris.Icons.Avalonia.FontAwesome;
 /// <summary>
 /// Implements the <see cref="IIconProvider"/> interface to provide font-awesome icons.
 /// </summary>
-public class FontAwesomeIconProvider : IIconProvider
+public class FontAwesomeIconProvider : IIconProvider, IIconKeyProvider
 {
     private const string _faProviderPrefix = "fa";
     private readonly IFontAwesomeUtf8JsonStreamProvider _streamProvider;
     private readonly Lazy<Dictionary<string, FontAwesomeIcon>> _lazyIcons;
+    private readonly Lazy<IReadOnlyList<string>> _lazyKeys;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="FontAwesomeIconProvider"/> using the <see cref="FontAwesomeFreeUtf8JsonStreamProvider"/>
@@ -31,10 +32,15 @@ public class FontAwesomeIconProvider : IIconProvider
     {
         _streamProvider = streamProvider;
         _lazyIcons = new(Parse);
+        _lazyKeys = new(BuildKeys);
     }
 
     /// <inheritdoc/>
     public string Prefix => _faProviderPrefix;
+
+    /// <inheritdoc/>
+    public IReadOnlyList<string> Keys => _lazyKeys.Value;
+
     private Dictionary<string, FontAwesomeIcon> Icons => _lazyIcons.Value;
 
     /// <inheritdoc/>
@@ -60,6 +66,21 @@ public class FontAwesomeIconProvider : IIconProvider
         throw new KeyNotFoundException(
             $"FontAwesome style \"{key.Style}\" not found for icon \"{key.Value}\". Maybe you are trying to use an unsupported pro icon."
         );
+    }
+
+    private IReadOnlyList<string> BuildKeys()
+    {
+        var keys = new List<string>();
+        foreach (var kvp in Icons)
+        {
+            foreach (var style in kvp.Value.Svg.Keys)
+            {
+                keys.Add($"{_faProviderPrefix}-{style.ToString().ToLowerInvariant()} {_faProviderPrefix}-{kvp.Key}");
+            }
+        }
+
+        keys.Sort(StringComparer.Ordinal);
+        return keys;
     }
 
     private Dictionary<string, FontAwesomeIcon> Parse()

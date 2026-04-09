@@ -19,6 +19,14 @@ public class IconProvider : IIconReader, IIconProviderContainer
     private readonly List<IIconProvider> _iconProviders = new();
     public static IconProvider Current { get; } = new IconProvider();
 
+    /// <summary>
+    /// Gets a snapshot of all registered icon providers.
+    /// </summary>
+    public IReadOnlyList<IIconProvider> Providers
+    {
+        get { lock (_lock) { return [.. _iconProviders]; } }
+    }
+
     /// <inheritdoc/>
     public IconModel GetIcon(string value)
     {

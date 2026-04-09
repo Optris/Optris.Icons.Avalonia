@@ -10,11 +10,12 @@ namespace Optris.Icons.Avalonia.FontAwesome7;
 /// <summary>
 /// Implements the <see cref="IIconProvider"/> interface to provide Font Awesome 7 icons.
 /// </summary>
-public class FontAwesome7IconProvider : IIconProvider
+public class FontAwesome7IconProvider : IIconProvider, IIconKeyProvider
 {
     private const string _fa7ProviderPrefix = "fa7";
     private readonly IFontAwesome7Utf8JsonStreamProvider _streamProvider;
     private readonly Lazy<Dictionary<string, FontAwesome7Icon>> _lazyIcons;
+    private readonly Lazy<IReadOnlyList<string>> _lazyKeys;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="FontAwesome7IconProvider"/> using the <see cref="FontAwesome7FreeUtf8JsonStreamProvider"/>
@@ -31,10 +32,15 @@ public class FontAwesome7IconProvider : IIconProvider
     {
         _streamProvider = streamProvider;
         _lazyIcons = new(Parse);
+        _lazyKeys = new(BuildKeys);
     }
 
     /// <inheritdoc/>
     public string Prefix => _fa7ProviderPrefix;
+
+    /// <inheritdoc/>
+    public IReadOnlyList<string> Keys => _lazyKeys.Value;
+
     private Dictionary<string, FontAwesome7Icon> Icons => _lazyIcons.Value;
 
     /// <inheritdoc/>
@@ -60,6 +66,21 @@ public class FontAwesome7IconProvider : IIconProvider
         throw new KeyNotFoundException(
             $"FontAwesome 7 style \"{key.Style}\" not found for icon \"{key.Value}\". Maybe you are trying to use an unsupported pro icon."
         );
+    }
+
+    private IReadOnlyList<string> BuildKeys()
+    {
+        var keys = new List<string>();
+        foreach (var kvp in Icons)
+        {
+            foreach (var style in kvp.Value.Svg.Keys)
+            {
+                keys.Add($"{_fa7ProviderPrefix}-{style.ToString().ToLowerInvariant()} {_fa7ProviderPrefix}-{kvp.Key}");
+            }
+        }
+
+        keys.Sort(StringComparer.Ordinal);
+        return keys;
     }
 
     private Dictionary<string, FontAwesome7Icon> Parse()
