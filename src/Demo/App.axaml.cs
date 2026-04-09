@@ -1,7 +1,9 @@
+using System;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using Avalonia.Platform;
 
 namespace Demo;
 
@@ -11,7 +13,8 @@ public class App : Application
     {
         AvaloniaXamlLoader.Load(this);
 #if DEBUG
-        this.AttachDeveloperTools();
+        if (!OperatingSystem.IsBrowser())
+            this.AttachDeveloperTools();
 #endif
     }
 
@@ -19,10 +22,13 @@ public class App : Application
     {
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
+            var iconStream = AssetLoader.Open(new Uri("avares://Demo/Assets/icon-core.ico"));
             desktop.MainWindow = new Window
             {
-                Title = "Demo",
-                SizeToContent = SizeToContent.WidthAndHeight,
+                Title = "Icons.Avalonia Demo",
+                Icon = new WindowIcon(iconStream),
+                Width = 900,
+                Height = 700,
                 Content = new MainView(),
             };
         }

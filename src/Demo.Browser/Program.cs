@@ -13,9 +13,6 @@ using Optris.Icons.Avalonia.MaterialDesign;
 internal sealed partial class Program
 {
     private static Task Main(string[] args) => BuildAvaloniaApp()
-#if DEBUG
-            .WithDeveloperTools()
-#endif
             .StartBrowserAppAsync("out");
 
     public static AppBuilder BuildAvaloniaApp()

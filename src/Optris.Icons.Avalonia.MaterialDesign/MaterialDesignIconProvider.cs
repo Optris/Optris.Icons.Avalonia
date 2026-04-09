@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using Optris.Icons.Avalonia.Models;
@@ -9,7 +11,7 @@ namespace Optris.Icons.Avalonia.MaterialDesign;
 /// <summary>
 /// Implements the <see cref="IIconProvider"/> interface to provide Material Design icons.
 /// </summary>
-public class MaterialDesignIconProvider : IIconProvider
+public class MaterialDesignIconProvider : IIconProvider, IIconKeyProvider
 {
     private const string _mdiProviderPrefix = "mdi";
 
@@ -21,8 +23,12 @@ public class MaterialDesignIconProvider : IIconProvider
     private static readonly Regex _viewBoxRegex = new("viewBox=\"([0-9 -]+)\"");
     private static readonly Regex _pathRegex = new("<path d=\"(.+)\"");
     private readonly Dictionary<string, IconModel> _icons = new();
+    private readonly Lazy<IReadOnlyList<string>> _lazyKeys = new(BuildKeys);
 
     public string Prefix => _mdiProviderPrefix;
+
+    /// <inheritdoc/>
+    public IReadOnlyList<string> Keys => _lazyKeys.Value;
 
     /// <inheritdoc/>
     public IconModel GetIcon(string value)
@@ -34,6 +40,18 @@ public class MaterialDesignIconProvider : IIconProvider
 
         icon = GetIconFromResource(value);
         return _icons[value] = icon;
+    }
+
+    private static IReadOnlyList<string> BuildKeys()
+    {
+        var assetsPrefix = $"{_assembly.GetName().Name}.Assets.";
+        const string svgSuffix = ".svg";
+
+        return _assembly.GetManifestResourceNames()
+            .Where(n => n.StartsWith(assetsPrefix, StringComparison.Ordinal) && n.EndsWith(svgSuffix, StringComparison.Ordinal))
+            .Select(n => $"{_mdiProviderPrefix}-{n.Substring(assetsPrefix.Length, n.Length - assetsPrefix.Length - svgSuffix.Length)}")
+            .OrderBy(k => k, StringComparer.Ordinal)
+            .ToList();
     }
 
     private static IconModel GetIconFromResource(string value)
