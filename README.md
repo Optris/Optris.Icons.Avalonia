@@ -39,18 +39,21 @@ A full example is available in the [Demo project](src/Demo/) ([live](https://opt
 Register the icon provider(s) with the `IconProvider.Current`.
 
 ```csharp
-class Program
+using Avalonia;
+using Optris.Icons.Avalonia;
+using Optris.Icons.Avalonia.FontAwesome;
+using Optris.Icons.Avalonia.MaterialDesign;
+
+namespace Demo.Desktop;
+
+internal static class Program
 {
-    // Initialization code. Don't use any Avalonia, third-party APIs or any
-    // SynchronizationContext-reliant code before AppMain is called: things aren't initialized
-    // yet and stuff might break.
     public static void Main(string[] args)
     {
         BuildAvaloniaApp()
             .StartWithClassicDesktopLifetime(args);
     }
 
-    // Avalonia configuration, don't remove; also used by visual designer.
     public static AppBuilder BuildAvaloniaApp()
     {
         IconProvider.Current
@@ -73,13 +76,13 @@ Add `xmlns:i="https://github.com/projektanker/icons.avalonia"` to your view.
 **Standalone**
 
 ```xml
-<i:Icon Value="fa-brands fa-anchor" />
+<i:Icon Value="fa-solid fa-anchor" />
 ```
 
 **Attached to ContentControl (e.g. Button)**
 
 ```xml
-<Button i:Attached.Icon="fa-brands fa-anchor" />
+<Button i:Attached.Icon="fa-solid fa-anchor" />
 ```
 
 **Attached to MenuItem**
@@ -91,7 +94,7 @@ Add `xmlns:i="https://github.com/projektanker/icons.avalonia"` to your view.
 **Custom icon size**
 
 ```xml
-<i:Icon Value="fa-brands fa-anchor" FontSize="24" />
+<i:Icon Value="fa-solid fa-anchor" FontSize="24" />
 ```
 
 **Animated**
@@ -106,7 +109,7 @@ Add `xmlns:i="https://github.com/projektanker/icons.avalonia"` to your view.
 ```xml
 <Image>
   <Image.Source>
-    <i:IconImage Value="fa-brands fa-anchor" Brush="(defaults to black)" />
+    <i:IconImage Value="fa-solid fa-anchor" Brush="(defaults to black)" />
   </Image.Source>
 </Image>
 ```
@@ -120,34 +123,16 @@ Add `xmlns:i="https://github.com/projektanker/icons.avalonia"` to your view.
 Just implement the `IIconProvider` interface:
 
 ```csharp
-namespace Optris.Icons.Avalonia
-{
-    /// <summary>
-    /// Represents an icon reader.
-    /// </summary>
-    public interface IIconReader
-    {
-        /// <summary>
-        /// Gets the model of the requested icon.
-        /// </summary>
-        /// <param name="value">The value specifying the icon to return it's model from.</param>
-        /// <returns>The model of the icon.</returns>
-        /// <exception cref="System.Collections.Generic.KeyNotFoundException">
-        /// The icon associated with the specified <paramref name="value"/> does not exists.
-        /// </exception>
-        IconModel GetIcon(string value);
-    }
+namespace Optris.Icons.Avalonia;
 
-    /// <summary>
-    /// Represents an icon provider.
-    /// </summary>
-    public interface IIconProvider : IIconReader
-    {
-        /// <summary>
-        /// Gets the prefix of the <see cref="IIconProvider"/>.
-        /// </summary>
-        string Prefix { get; }
-    }
+public interface IIconReader
+{
+    IconModel GetIcon(string value);
+}
+
+public interface IIconProvider : IIconReader
+{
+    string Prefix { get; }
 }
 ```
 
