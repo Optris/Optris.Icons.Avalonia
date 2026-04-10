@@ -8,11 +8,11 @@
         <AvaloniaResource Include="..\..\resources\icon-core.ico" Link="Assets\icon-core.ico" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="Avalonia" Version="12.0.0" />
-        <PackageReference Include="Avalonia.Controls.ItemsRepeater" Version="12.0.0" />
-        <PackageReference Include="AvaloniaUI.DiagnosticsSupport" Version="2.2.0" />
-        <PackageReference Include="Avalonia.Themes.Fluent" Version="12.0.0" />
-        <PackageReference Include="Avalonia.Themes.Simple" Version="12.0.0" />
+        <PackageReference Include="Avalonia" />
+        <PackageReference Include="Avalonia.Controls.ItemsRepeater" />
+        <PackageReference Include="AvaloniaUI.DiagnosticsSupport" />
+        <PackageReference Include="Avalonia.Themes.Fluent" />
+        <PackageReference Include="Avalonia.Themes.Simple" />
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\Optris.Icons.Avalonia.FontAwesome\Optris.Icons.Avalonia.FontAwesome.csproj" />

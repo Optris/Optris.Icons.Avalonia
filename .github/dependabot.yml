@@ -1,9 +1,11 @@
 version: 2
 updates:
   - package-ecosystem: "nuget"
-    directory: "src"
+    directory: "/"
     schedule:
       interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 10
     labels:
       - "dependencies"
     commit-message:
@@ -13,13 +15,19 @@ updates:
       avalonia:
         patterns:
           - "Avalonia*"
-      xunit:
+      test:
         patterns:
           - "xunit*"
+          - "Microsoft.NET.Test.Sdk"
+          - "coverlet.*"
+          - "NSubstitute"
+          - "FluentAssertions"
+
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "weekly"
+      day: "monday"
     labels:
       - "dependencies"
     commit-message:
