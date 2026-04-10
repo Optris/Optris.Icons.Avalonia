@@ -8,7 +8,7 @@
         <RootNamespace>Optris.Icons.Avalonia</RootNamespace>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="Avalonia" Version="12.0.0" />
+        <PackageReference Include="Avalonia" />
     </ItemGroup>
     <ItemGroup>
         <None Include="..\..\resources\icon-core.png" Pack="true" PackagePath="icon.png" />
