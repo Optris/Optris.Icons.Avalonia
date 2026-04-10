@@ -22,7 +22,7 @@ A library to easily display icons in an Avalonia App.
 | :-------------------------------------------------------------------------------------------------------------------- | :-------------------------------------------------------------- | :--------------------------------------------------------------------------- |
 | [Optris.Icons.Avalonia](https://www.nuget.org/packages/Optris.Icons.Avalonia/)                                        | Core library                                                    | ![Nuget](https://badgen.net/nuget/v/Optris.Icons.Avalonia)                  |
 | [Optris.Icons.Avalonia.FontAwesome](https://www.nuget.org/packages/Optris.Icons.Avalonia.FontAwesome/)                | [Font Awesome 6 Free](https://fontawesome.com)                  | ![Nuget](https://badgen.net/nuget/v/Optris.Icons.Avalonia.FontAwesome)      |
-| [Optris.Icons.Avalonia.FontAwesome7](https://www.nuget.org/packages/Optris.Icons.Avalonia.FontAwesome7/)              | [Font Awesome 7 Free](https://fontawesome.com)                  | ![Nuget](https://badgen.net/nuget/v/Optris.Icons.Avalonia.FontAwesome7)     |
+| [Optris.Icons.Avalonia.FontAwesome7](https://www.nuget.org/packages/Optris.Icons.Avalonia.FontAwesome7/)              | [Font Awesome 7 Free](https://fontawesome.com)                  | ![Nuget](https://badgen.net/nuget/v/Optris.Icons.Avalonia.FontAwesome)     |
 | [Optris.Icons.Avalonia.MaterialDesign](https://www.nuget.org/packages/Optris.Icons.Avalonia.MaterialDesign/)          | [Material Design Icons](https://pictogrammers.com/library/mdi/) | ![Nuget](https://badgen.net/nuget/v/Optris.Icons.Avalonia.MaterialDesign)   |
 
 ## Installation
