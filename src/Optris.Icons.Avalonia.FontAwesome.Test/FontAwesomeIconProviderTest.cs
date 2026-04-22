@@ -484,6 +484,84 @@ public class FontAwesomeIconProviderTest
         Assert.Throws<KeyNotFoundException>(() => _customIconProvider.GetIcon(value));
     }
 
+    [Theory]
+    [InlineData("fa-github-custom")]
+    [InlineData("fa-brands fa-github-custom")]
+    public void FromEmbeddedResource_Should_Load_Custom_Icons(string value)
+    {
+        // Arrange
+        var assembly = Assembly.GetExecutingAssembly();
+        var resourceName = $"{assembly.GetName().Name}.icons.json";
+        var provider = FontAwesomeIconProvider.FromEmbeddedResource(assembly, resourceName);
+
+        // Act
+        var icon = provider.GetIcon(value);
+
+        // Assert
+        icon.Should().NotBeNull();
+        icon.Path.ToString()
+            .Should()
+            .StartWith("M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6");
+    }
+
+    [Fact]
+    public void FromFile_Should_Load_Icons_From_Disk()
+    {
+        // Arrange
+        using var sourceStream = new TestStreamProvider().GetUtf8JsonStream();
+        var tempPath = Path.Combine(Path.GetTempPath(), $"optris-fa-test-{Guid.NewGuid():N}.json");
+        try
+        {
+            using (var file = File.Create(tempPath))
+            {
+                sourceStream.CopyTo(file);
+            }
+
+            var provider = FontAwesomeIconProvider.FromFile(tempPath);
+
+            // Act
+            var icon = provider.GetIcon("fa-github-custom");
+
+            // Assert
+            icon.Should().NotBeNull();
+            icon.Path.ToString()
+                .Should()
+                .StartWith("M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6");
+        }
+        finally
+        {
+            if (File.Exists(tempPath)) File.Delete(tempPath);
+        }
+    }
+
+    [Fact]
+    public void FromStream_Should_Load_Icons_And_Not_Retain_Source_Stream()
+    {
+        // Arrange
+        using var sourceStream = new TestStreamProvider().GetUtf8JsonStream();
+        var provider = FontAwesomeIconProvider.FromStream(sourceStream);
+
+        // Act
+        var icon = provider.GetIcon("fa-github-custom");
+
+        // Assert — subsequent lookups still work (stream was buffered, not held)
+        icon.Should().NotBeNull();
+        provider.GetIcon("fa-brands fa-github-custom").Should().NotBeNull();
+    }
+
+    [Fact]
+    public void FromEmbeddedResource_Should_Throw_When_Resource_Missing()
+    {
+        // Arrange
+        var provider = FontAwesomeIconProvider.FromEmbeddedResource(
+            Assembly.GetExecutingAssembly(),
+            "does-not-exist.json"
+        );
+
+        // Act + Assert — exception surfaces on first lookup (Lazy)
+        Assert.Throws<InvalidOperationException>(() => provider.GetIcon("fa-anything"));
+    }
+
     private sealed class TestStreamProvider : IFontAwesomeUtf8JsonStreamProvider
     {
         public Stream GetUtf8JsonStream()

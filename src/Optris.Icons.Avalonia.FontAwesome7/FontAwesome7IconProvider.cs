@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text.Json;
 using Optris.Icons.Avalonia.FontAwesome7.Models;
 using Optris.Icons.Avalonia.Models;
@@ -34,6 +36,35 @@ public class FontAwesome7IconProvider : IIconProvider, IIconKeyProvider
         _lazyIcons = new(Parse);
         _lazyKeys = new(BuildKeys);
     }
+
+    /// <summary>
+    /// Creates a provider that loads <c>icons.json</c> from the given file path.
+    /// </summary>
+    public static FontAwesome7IconProvider FromFile(string path) =>
+        new(new FontAwesome7FileUtf8JsonStreamProvider(path));
+
+    /// <summary>
+    /// Creates a provider that loads <c>icons.json</c> from the given stream.
+    /// The stream is fully read into memory during this call; the caller remains responsible for disposing the original stream.
+    /// </summary>
+    public static FontAwesome7IconProvider FromStream(Stream stream)
+    {
+        using var memory = new MemoryStream();
+        stream.CopyTo(memory);
+        return new FontAwesome7IconProvider(new BufferedUtf8JsonStreamProvider(memory.ToArray()));
+    }
+
+    /// <summary>
+    /// Creates a provider that loads <c>icons.json</c> from an embedded resource.
+    /// </summary>
+    public static FontAwesome7IconProvider FromEmbeddedResource(Assembly assembly, string resourceName) =>
+        new(new FontAwesome7EmbeddedResourceUtf8JsonStreamProvider(assembly, resourceName));
+
+    /// <summary>
+    /// Creates a provider that loads <c>icons.json</c> from an Avalonia asset URI (<c>avares://…</c>).
+    /// </summary>
+    public static FontAwesome7IconProvider FromAvaloniaResource(Uri uri) =>
+        new(new FontAwesome7AvaloniaResourceUtf8JsonStreamProvider(uri));
 
     /// <inheritdoc/>
     public string Prefix => _fa7ProviderPrefix;
