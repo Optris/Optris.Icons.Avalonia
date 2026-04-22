@@ -7,7 +7,7 @@ internal partial class FontAwesomeIconKey
 {
     private const string _faKeyPrefix = "fa-";
     public string Value { get; set; }
-    public Style? Style { get; set; }
+    public string Style { get; set; }
 
     public static bool TryParse(string value, out FontAwesomeIconKey key)
     {
@@ -37,14 +37,16 @@ internal partial class FontAwesomeIconKey
         return false;
     }
 
-    private static Style? GetStyle(string value)
+    private static string GetStyle(string value)
     {
         return value.ToUpperInvariant() switch
         {
-            "FA-SOLID" or "FAS" => (Style?)Models.Style.Solid,
-            "FA-REGULAR" or "FAR" => (Style?)Models.Style.Regular,
-            "FA-BRANDS" or "FAB" => (Style?)Models.Style.Brands,
-            _ => null,
+            "FA-SOLID" or "FAS" => "solid",
+            "FA-REGULAR" or "FAR" => "regular",
+            "FA-BRANDS" or "FAB" => "brands",
+            _ => value.Length <= _faKeyPrefix.Length
+                ? string.Empty
+                : value.Substring(_faKeyPrefix.Length),
         };
     }
 

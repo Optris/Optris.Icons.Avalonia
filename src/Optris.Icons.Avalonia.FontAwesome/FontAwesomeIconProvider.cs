@@ -54,11 +54,11 @@ public class FontAwesomeIconProvider : IIconProvider, IIconKeyProvider
         {
             throw new KeyNotFoundException($"FontAwesome icon \"{key.Value}\" not found!");
         }
-        else if (!key.Style.HasValue)
+        else if (string.IsNullOrEmpty(key.Style))
         {
             return icon.Svg.Values.First().ToIconModel();
         }
-        else if (icon.Svg.TryGetValue(key.Style.Value, out Svg svg))
+        else if (icon.Svg.TryGetValue(key.Style, out Svg svg))
         {
             return svg.ToIconModel();
         }
@@ -75,7 +75,7 @@ public class FontAwesomeIconProvider : IIconProvider, IIconKeyProvider
         {
             foreach (var style in kvp.Value.Svg.Keys)
             {
-                keys.Add($"{_faProviderPrefix}-{style.ToString().ToLowerInvariant()} {_faProviderPrefix}-{kvp.Key}");
+                keys.Add($"{_faProviderPrefix}-{style.ToLowerInvariant()} {_faProviderPrefix}-{kvp.Key}");
             }
         }
 
