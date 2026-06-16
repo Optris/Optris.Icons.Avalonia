@@ -224,8 +224,8 @@
 			<Setter Property="Grid.Column" Value="2" />
 			<Setter Property="Margin" Value="5" />
 		</Style>
-		<Style Selector="Button.disableByStyle">
-			<Setter Property="IsEnabled" Value="{ReflectionBinding IsEnabled}" />
+		<Style Selector="Button.disableByStyle" x:DataType="vm:DemoViewModel">
+			<Setter Property="IsEnabled" Value="{Binding IsEnabled}" />
 		</Style>
 		<Style Selector="Image.icon">
 			<Setter Property="Grid.Column" Value="1" />

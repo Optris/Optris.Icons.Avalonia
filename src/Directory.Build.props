@@ -15,6 +15,19 @@
         <Version>12.0.0</Version>
     </PropertyGroup>
 
+    <!--
+        AOT/trim enforcement for the shipping icon libraries only.
+        IsAotCompatible implies IsTrimmable + the trim/AOT/single-file analyzers, so any
+        trim- or AOT-unsafe pattern in library code fails the build. It is supported on
+        net8.0+; every library targets net8.0;net9.0;net10.0, so no per-TFM guard is needed.
+        Scoped by project name (not IsPackable, which isn't set yet when this file is
+        imported): matches the four Optris.Icons.Avalonia* libraries and excludes the
+        *.Test projects, the Demo apps, and the IconGenerator tool.
+    -->
+    <PropertyGroup Condition="'$(MSBuildProjectName.StartsWith(`Optris.Icons.Avalonia`))' == 'true' and '$(MSBuildProjectName.EndsWith(`Test`))' == 'false'">
+        <IsAotCompatible>true</IsAotCompatible>
+    </PropertyGroup>
+
     <ItemGroup Condition="'$(ProjectName.EndsWith(`Test`))' == 'false'">
         <None Include="..\..\README.md" Pack="true" PackagePath="\"/>
     </ItemGroup>
