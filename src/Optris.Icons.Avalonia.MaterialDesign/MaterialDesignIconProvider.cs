@@ -11,7 +11,7 @@ namespace Optris.Icons.Avalonia.MaterialDesign;
 /// <summary>
 /// Implements the <see cref="IIconProvider"/> interface to provide Material Design icons.
 /// </summary>
-public class MaterialDesignIconProvider : IIconProvider, IIconKeyProvider
+public partial class MaterialDesignIconProvider : IIconProvider, IIconKeyProvider
 {
     private const string _mdiProviderPrefix = "mdi";
 
@@ -20,8 +20,15 @@ public class MaterialDesignIconProvider : IIconProvider, IIconKeyProvider
     private static readonly string _resourceNameTemplate
         = $"{_assembly.GetName().Name}.Assets.{{0}}.svg";
 
-    private static readonly Regex _viewBoxRegex = new("viewBox=\"([0-9 -]+)\"");
-    private static readonly Regex _pathRegex = new("<path d=\"(.+)\"");
+    // Source-generated regexes: the matching code is emitted at build time, so there is no
+    // runtime pattern parsing and no Reflection.Emit (which RegexOptions.Compiled would use
+    // and which is unsupported under Native AOT). Do NOT add RegexOptions.Compiled here.
+    [GeneratedRegex("viewBox=\"([0-9 -]+)\"")]
+    private static partial Regex ViewBoxRegex();
+
+    [GeneratedRegex("<path d=\"(.+)\"")]
+    private static partial Regex PathRegex();
+
     private readonly Dictionary<string, IconModel> _icons = new();
     private readonly Lazy<IReadOnlyList<string>> _lazyKeys = new(BuildKeys);
 
@@ -61,14 +68,14 @@ public class MaterialDesignIconProvider : IIconProvider, IIconKeyProvider
         {
             var svg = textReader.ReadToEnd();
 
-            var viewBoxMatch = _viewBoxRegex.Match(svg);
+            var viewBoxMatch = ViewBoxRegex().Match(svg);
             if (!viewBoxMatch.Success)
             {
                 throw new KeyNotFoundException(
                     $"Material Design Icon \"{value}\": SVG has no valid viewBox attribute.");
             }
 
-            var pathMatch = _pathRegex.Match(svg);
+            var pathMatch = PathRegex().Match(svg);
             if (!pathMatch.Success)
             {
                 throw new KeyNotFoundException(

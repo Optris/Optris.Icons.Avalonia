@@ -3,7 +3,14 @@
         <OutputType>WinExe</OutputType>
         <TargetFramework>net10.0</TargetFramework>
         <IsPackable>false</IsPackable>
-        <PublishTrimmed>true</PublishTrimmed>
+        <!--
+            Native AOT by default: `dotnet publish` produces a trimmed, reflection-free
+            native image and serves as the end-to-end proof that the icon libraries and
+            their XAML survive AOT. Enabling PublishAot also turns on the trim/AOT analyzers
+            for this app at build time, so cross-assembly issues surface early.
+            (A plain `dotnet build`/F5 is unaffected — PublishAot only applies to publish.)
+        -->
+        <PublishAot>true</PublishAot>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="Avalonia.Desktop" />
