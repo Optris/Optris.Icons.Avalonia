@@ -19,6 +19,9 @@ jobs:
     name: 📦 Pack & Publish
     needs: test
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
     steps:
       - uses: actions/checkout@v7
 
@@ -40,11 +43,34 @@ jobs:
           dotnet pack Optris.Icons.Avalonia.FontAwesome7/Optris.Icons.Avalonia.FontAwesome7.csproj -c Release -o ../artifacts -p:Version=${{ steps.version.outputs.value }}
           dotnet pack Optris.Icons.Avalonia.MaterialDesign/Optris.Icons.Avalonia.MaterialDesign.csproj -c Release -o ../artifacts -p:Version=${{ steps.version.outputs.value }}
 
+      # Trusted Publishing: nuget.org trusts a short-lived OIDC token from this exact repository
+      # and workflow file instead of a stored key, so there is no long-lived credential to leak,
+      # rotate or expire. `id-token: write` on the job is what lets it ask GitHub for that token.
+      # The policy on nuget.org is pinned to owner/repo IDs, so deleting and recreating a repo of
+      # the same name cannot inherit the trust - and RENAMING THIS FILE breaks publishing until
+      # the policy's "Workflow File" is updated to match.
+      #
+      # Requested immediately before the push, deliberately: the key nuget.org hands back is valid
+      # for one hour and one OIDC token buys exactly one key, so asking earlier in the job just
+      # spends part of that hour waiting.
+      - name: 🔑 NuGet login (OIDC)
+        uses: NuGet/login@v1
+        id: nuget-login
+        with:
+          user: ${{ vars.NUGET_USER || 'saitz-optris' }}
+
       - name: Push to NuGet
         working-directory: artifacts
+        env:
+          NUGET_API_KEY: ${{ steps.nuget-login.outputs.NUGET_API_KEY }}
         run: |
-          dotnet nuget push "*.nupkg" --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET_API_KEY }} --skip-duplicate
-          dotnet nuget push "*.snupkg" --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET_API_KEY }} --skip-duplicate
+          set -euo pipefail
+          if [ -z "${NUGET_API_KEY:-}" ]; then
+            echo "::error::The OIDC exchange returned no key. Check the Trusted Publishing policy on nuget.org names owner Optris, repository Optris.Icons.Avalonia and workflow file release.yml, and that the login user is the nuget.org profile name."
+            exit 1
+          fi
+          dotnet nuget push "*.nupkg" --source https://api.nuget.org/v3/index.json --api-key "$NUGET_API_KEY" --skip-duplicate
+          dotnet nuget push "*.snupkg" --source https://api.nuget.org/v3/index.json --api-key "$NUGET_API_KEY" --skip-duplicate
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v7
