@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <Description>A library to easily display FontAwesome icons in an Avalonia App.</Description>
-        <TargetFrameworks>net8.0;net9.0;net10.0</TargetFrameworks>
+        <TargetFrameworks>net8.0;net10.0</TargetFrameworks>
         <PackageId>Optris.Icons.Avalonia.FontAwesome</PackageId>
         <AssemblyName>Optris.Icons.Avalonia.FontAwesome</AssemblyName>
         <RootNamespace>Optris.Icons.Avalonia.FontAwesome</RootNamespace>

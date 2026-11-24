@@ -5,7 +5,7 @@ Thank you for your interest in contributing! This guide covers how to set up the
 ## Prerequisites
 
 - [.NET SDK 10+](https://dotnet.microsoft.com/download) (see [global.json](global.json) for the exact version; rollForward is set to `latestFeature`)
-- The solution also targets .NET 8.0 and .NET 9.0
+- The solution also targets .NET 8.0
 
 ## Project structure
 
