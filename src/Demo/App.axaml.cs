@@ -27,7 +27,7 @@ public class App : Application
             {
                 Title = "Icons.Avalonia Demo",
                 Icon = new WindowIcon(iconStream),
-                Width = 900,
+                Width = 1250,
                 Height = 700,
                 Content = new MainView(),
             };

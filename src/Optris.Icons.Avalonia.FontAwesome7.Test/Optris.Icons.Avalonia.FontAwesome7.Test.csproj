@@ -7,6 +7,7 @@
         <EmbeddedResource Include="icons.json" />
     </ItemGroup>
     <ItemGroup>
+        <PackageReference Include="Avalonia.Headless" />
         <PackageReference Include="Avalonia.Skia" />
         <PackageReference Include="FluentAssertions" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" />
