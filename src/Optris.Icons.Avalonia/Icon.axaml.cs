@@ -40,6 +40,9 @@ public partial class Icon : TemplatedControl
 
     static Icon()
     {
+        // TemplatedControl clips to its bounds by default. Icons may draw parts outside their box on
+        // purpose (see IconImage), so the icon itself does not clip them.
+        ClipToBoundsProperty.OverrideDefaultValue<Icon>(false);
         IsVisibleProperty.Changed.Subscribe(_ => UpdateAnimatedIcons());
     }
 

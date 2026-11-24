@@ -21,7 +21,8 @@ public enum HideMethod
     RemoveFromVisualTree,
 }
 
-public class IconAnimationVisibilityTest : IClassFixture<HeadlessSessionFixture>
+[Collection(HeadlessCollection.Name)]
+public class IconAnimationVisibilityTest
 {
     // Generous, because a busy CI machine can delay render passes. Passing tests stop waiting as soon as they can.
     private static readonly TimeSpan AnimatingTimeout = TimeSpan.FromSeconds(10);
