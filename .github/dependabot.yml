@@ -1,7 +1,9 @@
 version: 2
 updates:
   - package-ecosystem: "nuget"
-    directory: "/"
+    directories:
+      - "/src"
+      - "/tools/IconGenerator"
     schedule:
       interval: "weekly"
       day: "monday"

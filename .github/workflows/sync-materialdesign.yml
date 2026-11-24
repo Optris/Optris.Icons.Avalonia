@@ -58,6 +58,7 @@ jobs:
 
       - name: 🧪 dotnet test
         if: ${{ steps.git-check.outputs.modified == 'true' }}
+        working-directory: src
         run: dotnet test --configuration Release
 
       - name: 💬 Create Pull Request
@@ -67,3 +68,4 @@ jobs:
           branch: material-design
           commit-message: "Material Design icons changed."
           title: "feat(Material Design): 🔄 icons changed."
+          sign-commits: true

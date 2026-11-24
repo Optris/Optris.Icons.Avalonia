@@ -43,6 +43,7 @@ jobs:
 
       - name: 🧪 dotnet test
         if: ${{ steps.git-check.outputs.modified == 'true' }}
+        working-directory: src
         run: dotnet test --configuration Release
 
       - name: 💬 Create Pull Request
@@ -52,3 +53,4 @@ jobs:
           branch: fontawesome7
           commit-message: "FontAwesome 7 icons changed."
           title: "feat(FontAwesome7): 🔄 icons changed."
+          sign-commits: true
