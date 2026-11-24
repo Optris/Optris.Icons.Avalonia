@@ -4,7 +4,8 @@
                   x:Class="Optris.Icons.Avalonia.Icon">
 
 	<TemplatedControl.Styles>
-		<Style Selector="local|Icon[Animation=Spin]">
+		<!-- IsAnimationActive is false while the icon is hidden or detached, so no animation keeps the render loop running. -->
+		<Style Selector="local|Icon[Animation=Spin][IsAnimationActive=True]">
 			<Style.Animations>
 				<Animation Duration="0:0:2" IterationCount="INFINITE">
 					<KeyFrame Cue="0%">
@@ -16,7 +17,7 @@
 				</Animation>
 			</Style.Animations>
 		</Style>
-		<Style Selector="local|Icon[Animation=Pulse]">
+		<Style Selector="local|Icon[Animation=Pulse][IsAnimationActive=True]">
 			<Style.Animations>
 				<Animation Duration="0:0:2"
 						   IterationCount="INFINITE">
