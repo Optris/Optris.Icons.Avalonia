@@ -4,8 +4,9 @@ Thank you for your interest in contributing! This guide covers how to set up the
 
 ## Prerequisites
 
-- [.NET SDK 10+](https://dotnet.microsoft.com/download) (see [global.json](global.json) for the exact version; rollForward is set to `latestFeature`)
-- The solution also targets .NET 8.0 and .NET 9.0
+- [.NET SDK 10 or later](https://dotnet.microsoft.com/download). [global.json](global.json) sets the minimum version and lets a newer SDK roll forward (`latestMajor`).
+- The libraries target .NET 8.0 and .NET 10.0, so the tests need both runtimes.
+- With the .NET 11 SDK installed, the tests also run on .NET 11.
 
 ## Project structure
 
@@ -49,6 +50,13 @@ The browser demo is deployed to [GitHub Pages](https://optris.github.io/Optris.I
 ```bash
 dotnet run --project src/Demo.Browser
 ```
+
+The browser demo needs the WebAssembly build tools of the SDK that builds it. Workloads are installed per SDK, so run the command in the repository folder, where `dotnet --version` shows the SDK that is used:
+
+- with a 10.0 SDK: `dotnet workload install wasm-tools`
+- with an 11.0 SDK: `dotnet workload install wasm-tools-net10`
+
+In another folder a different SDK may be selected, and it does not know the same workload IDs.
 
 ## Code style
 

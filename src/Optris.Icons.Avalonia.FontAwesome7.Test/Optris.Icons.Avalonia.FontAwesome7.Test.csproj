@@ -1,6 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFrameworks>net8.0;net9.0;net10.0</TargetFrameworks>
+        <TargetFrameworks>net8.0;net10.0</TargetFrameworks>
+        <!-- Also tested on .NET 11 when the .NET 11 SDK builds this project. The libraries have no net11.0
+             build; a .NET 11 app uses their net10.0 build, and so does this test run. -->
+        <TargetFrameworks Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '11.0'))">$(TargetFrameworks);net11.0</TargetFrameworks>
         <IsPackable>false</IsPackable>
     </PropertyGroup>
     <ItemGroup>
