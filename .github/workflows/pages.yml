@@ -18,11 +18,27 @@ jobs:
         with:
           dotnet-version: '10.0.x'
 
+      # global.json lets a newer SDK roll forward, and the runner image ships newer SDKs than the
+      # one installed above. This job publishes a net10.0-browser app with the .NET 10 wasm-tools
+      # workload, so it pins the SDK to the 10.0 band for itself.
+      - name: Use the .NET 10 SDK in this job
+        run: |
+          sed -i 's/"rollForward": "latestMajor"/"rollForward": "latestFeature"/' global.json
+          dotnet --version | grep -E '^10\.0\.'
+
       - name: Install wasm-tools
         run: dotnet workload install wasm-tools
 
+      # Without the wasm-tools workload of the selected SDK the publish still succeeds, but the
+      # native SkiaSharp library is not linked and the demo fails at startup. Fail instead.
       - name: Publish .NET Project
-        run: dotnet publish $PROJECT_PATH -c Release -o release --nologo
+        run: |
+          set -o pipefail
+          dotnet publish $PROJECT_PATH -c Release -o release --nologo | tee publish.log
+          if grep -q "Publishing without optimizations" publish.log; then
+            echo "::error::The browser demo was published without the wasm-tools workload of the selected SDK."
+            exit 1
+          fi
 
       - name: Clean up _framework for static hosting
         run: |
