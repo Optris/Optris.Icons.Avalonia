@@ -21,6 +21,6 @@
     <PackageVersion Include="xunit.runner.visualstudio" Version="4.0.1" />
   </ItemGroup>
   <ItemGroup Label="Tools">
-    <PackageVersion Include="SkiaSharp" Version="4.156.0" />
+    <PackageVersion Include="SkiaSharp" Version="4.157.0" />
   </ItemGroup>
 </Project>
