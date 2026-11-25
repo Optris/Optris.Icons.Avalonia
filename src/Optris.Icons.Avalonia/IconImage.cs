@@ -133,10 +133,12 @@ public class IconImage : DrawingImage, IImage
             destRect.Height / sourceRect.Height
         );
         var translate = Matrix.CreateTranslation(
-            -sourceRect.X + destRect.X - bounds.X,
-            -sourceRect.Y + destRect.Y - bounds.Y
+            -sourceRect.X - bounds.X,
+            -sourceRect.Y - bounds.Y
         );
-        var transform = translate * scale;
+        // The source and viewBox offsets are in viewBox units and are scaled. The destination offset is
+        // already in output units, so it is applied after the scale.
+        var transform = translate * scale * Matrix.CreateTranslation(destRect.X, destRect.Y);
 
         // When the whole image is drawn, the clip also covers the parts of the icon outside its viewBox,
         // up to where the transform puts them, so they are drawn outside destRect instead of being cut
