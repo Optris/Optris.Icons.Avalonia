@@ -18,6 +18,9 @@ public class IconImageTest
 {
     private const double Tolerance = 1e-6;
 
+    // A destination rectangle that does not start at 0,0, with different X and Y.
+    private static readonly Rect _offsetDestRect = new(100, 60, 64, 64);
+
     private readonly HeadlessUnitTestSession _session;
 
     static IconImageTest()
@@ -135,6 +138,69 @@ public class IconImageTest
         }
     });
 
+    // Custom render code and ImageDrawing can ask an image to draw into a rectangle that does not start at 0,0 (issue #43).
+    [Theory]
+    [MemberData(nameof(Icons))]
+    public Task ViewBox_Should_Be_Drawn_Onto_An_Offset_Dest_Rect(string viewBox, string path, bool _) => Run(() =>
+    {
+        var expected = ViewBoxModel.Parse(viewBox);
+        var image = new IconImage(InlineIconProvider.Key(viewBox, path), Brushes.Black);
+
+        var draw = HeadlessRendering.RecordDraw(image, new Rect(image.Size), _offsetDestRect);
+
+        var viewBoxDrawn = new Rect(expected.X, expected.Y, expected.Width, expected.Height).TransformToAABB(draw.Transform);
+        ShouldBeClose(viewBoxDrawn, _offsetDestRect);
+    });
+
+    [Theory]
+    [MemberData(nameof(Icons))]
+    public Task Whole_Image_Draw_Should_Land_In_An_Offset_Dest_Rect(string viewBox, string path, bool _) => Run(() =>
+    {
+        const int size = 256;
+        var model = ViewBoxModel.Parse(viewBox);
+        var geometry = StreamGeometry.Parse(path).Bounds;
+        var image = new IconImage(InlineIconProvider.Key(viewBox, path), Brushes.Black);
+
+        var pixels = HeadlessRendering.RenderDraw(image, new Rect(image.Size), _offsetDestRect, size);
+
+        // The geometry, including any part outside the viewBox, lands where the viewBox-to-destRect mapping puts it.
+        var scaleX = _offsetDestRect.Width / model.Width;
+        var scaleY = _offsetDestRect.Height / model.Height;
+        var expected = new Rect(
+            _offsetDestRect.X + (geometry.X - model.X) * scaleX,
+            _offsetDestRect.Y + (geometry.Y - model.Y) * scaleY,
+            geometry.Width * scaleX,
+            geometry.Height * scaleY);
+        ShouldBeClose(HeadlessRendering.InkBounds(pixels, size), expected, tolerance: 1);
+    });
+
+    // Non-square viewBoxes cropped to the square in their middle, as UniformToFill crops them.
+    [Theory]
+    [InlineData("0 0 576 512", "M0 0H576V548H0Z")]
+    [InlineData("0 0 320 512", "M0 -64H320V576H0Z")]
+    [InlineData("0 0 448 512", "M-16 0H464V512H-16Z")]
+    [InlineData("-64 -32 640 512", "M-64 -48H600V480H-64Z")]
+    public Task Cropping_Draw_Should_Fill_An_Offset_Dest_Rect(string viewBox, string path) => Run(() =>
+    {
+        const int size = 256;
+        var model = ViewBoxModel.Parse(viewBox);
+        var image = new IconImage(InlineIconProvider.Key(viewBox, path), Brushes.Black);
+        var side = Math.Min(image.Size.Width, image.Size.Height);
+        var sourceRect = new Rect((image.Size.Width - side) / 2, (image.Size.Height - side) / 2, side, side);
+
+        var draw = HeadlessRendering.RecordDraw(image, sourceRect, _offsetDestRect);
+        var pixels = HeadlessRendering.RenderDraw(image, sourceRect, _offsetDestRect, size);
+
+        // The source rect is drawn exactly onto destRect and stays clipped to it. Every path covers its viewBox,
+        // so the crop fills destRect.
+        using var scope = new AssertionScope();
+        var sourceDrawn = sourceRect.Translate(new Vector(model.X, model.Y)).TransformToAABB(draw.Transform);
+        ShouldBeClose(sourceDrawn, _offsetDestRect);
+        draw.Clips.Should().ContainSingle();
+        ShouldBeClose(draw.Clips[0], _offsetDestRect);
+        HeadlessRendering.InkBounds(pixels, size).Should().Be(_offsetDestRect);
+    });
+
     [Fact]
     public Task Icon_Should_Show_Geometry_Outside_Its_Box() => Run(() =>
     {
@@ -154,13 +220,13 @@ public class IconImageTest
 
     private Task Run(Action test) => _session.Dispatch(test, CancellationToken.None);
 
-    private static void ShouldBeClose(Rect actual, Rect expected)
+    private static void ShouldBeClose(Rect actual, Rect expected, double tolerance = Tolerance)
     {
         using var scope = new AssertionScope($"{actual} compared with {expected}");
-        actual.Left.Should().BeApproximately(expected.Left, Tolerance);
-        actual.Top.Should().BeApproximately(expected.Top, Tolerance);
-        actual.Right.Should().BeApproximately(expected.Right, Tolerance);
-        actual.Bottom.Should().BeApproximately(expected.Bottom, Tolerance);
+        actual.Left.Should().BeApproximately(expected.Left, tolerance);
+        actual.Top.Should().BeApproximately(expected.Top, tolerance);
+        actual.Right.Should().BeApproximately(expected.Right, tolerance);
+        actual.Bottom.Should().BeApproximately(expected.Bottom, tolerance);
     }
 
     /// <summary>

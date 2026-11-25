@@ -24,20 +24,22 @@ internal static class HeadlessRendering
         image.Measure(new Size(size, size));
         image.Arrange(new Rect(0, 0, size, size));
 
-        var recording = new DrawingGroup();
-        using (var context = recording.Open())
-        {
-            image.Render(context);
-        }
-
-        var clipped = Flatten(recording).Where(group => group.ClipGeometry is not null).ToList();
-        var transformed = Flatten(clipped[0]).Single(group => group.Transform is not null);
-        return new RecordedDraw(
-            DestRect: new Rect(image.Bounds.Size),
-            Clips: clipped.Select(group => group.ClipGeometry.Bounds).ToList(),
-            Drawn: clipped[0].GetBounds(),
-            Transform: transformed.Transform.Value);
+        return Record(image.Render, new Rect(image.Bounds.Size));
     }
+
+    /// <summary>
+    /// Asks <paramref name="source"/> directly to draw <paramref name="sourceRect"/> into <paramref name="destRect"/>,
+    /// as custom render code or an <see cref="ImageDrawing"/> does, and records what it draws.
+    /// </summary>
+    public static RecordedDraw RecordDraw(IImage source, Rect sourceRect, Rect destRect) =>
+        Record(context => context.DrawImage(source, sourceRect, destRect), destRect);
+
+    /// <summary>
+    /// Asks <paramref name="source"/> to draw <paramref name="sourceRect"/> into <paramref name="destRect"/> of a
+    /// <paramref name="size"/> x <paramref name="size"/> canvas and returns the canvas pixels.
+    /// </summary>
+    public static uint[] RenderDraw(IImage source, Rect sourceRect, Rect destRect, int size) =>
+        Pixels(Render(new DrawImageControl(source, sourceRect, destRect), size));
 
     /// <summary>
     /// Renders <paramref name="source"/> in a <paramref name="size"/> x <paramref name="size"/> <see cref="Image"/>
@@ -84,11 +86,52 @@ internal static class HeadlessRendering
         return pixels;
     }
 
+    /// <summary>
+    /// Returns the smallest rectangle of whole pixels that holds every drawn pixel, or an empty rectangle if
+    /// nothing is drawn.
+    /// </summary>
+    public static Rect InkBounds(uint[] pixels, int width)
+    {
+        var inked = Enumerable.Range(0, pixels.Length).Where(i => pixels[i] != 0).ToList();
+        if (inked.Count == 0)
+        {
+            return default;
+        }
+
+        var left = inked.Min(i => i % width);
+        var top = inked.Min(i => i / width);
+        var right = inked.Max(i => i % width) + 1;
+        var bottom = inked.Max(i => i / width) + 1;
+        return new Rect(left, top, right - left, bottom - top);
+    }
+
+    private static RecordedDraw Record(Action<DrawingContext> draw, Rect destRect)
+    {
+        var recording = new DrawingGroup();
+        using (var context = recording.Open())
+        {
+            draw(context);
+        }
+
+        var clipped = Flatten(recording).Where(group => group.ClipGeometry is not null).ToList();
+        var transformed = Flatten(clipped[0]).Single(group => group.Transform is not null);
+        return new RecordedDraw(
+            DestRect: destRect,
+            Clips: clipped.Select(group => group.ClipGeometry.Bounds).ToList(),
+            Drawn: clipped[0].GetBounds(),
+            Transform: transformed.Transform.Value);
+    }
+
     private static IEnumerable<DrawingGroup> Flatten(DrawingGroup group) =>
         group.Children.OfType<DrawingGroup>().SelectMany(Flatten).Prepend(group);
+
+    private sealed class DrawImageControl(IImage source, Rect sourceRect, Rect destRect) : Control
+    {
+        public override void Render(DrawingContext context) => context.DrawImage(source, sourceRect, destRect);
+    }
 }
 
-/// <param name="DestRect">The rectangle <see cref="Image"/> asks the source to draw into.</param>
+/// <param name="DestRect">The rectangle the source is asked to draw into.</param>
 /// <param name="Clips">The clips of the source's draws, in drawing order. An icon is drawn once, so there is one.</param>
 /// <param name="Drawn">The bounds of the drawing, ignoring the clips.</param>
 /// <param name="Transform">The transform the source draws with.</param>
