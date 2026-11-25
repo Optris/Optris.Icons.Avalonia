@@ -1,7 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
+using System.Text;
+using System.Text.Json;
 using FluentAssertions;
 using Optris.Icons.Avalonia.Models;
 using SkiaSharp;
@@ -11,6 +14,7 @@ namespace Optris.Icons.Avalonia.FontAwesome.Test;
 
 public class FontAwesomeIconProviderTest
 {
+    private static readonly Lazy<JsonElement> _bundledIcons = new(LoadBundledIcons);
     private readonly FontAwesomeIconProvider _iconProvider = new();
     private readonly FontAwesomeIconProvider _customIconProvider = new(new TestStreamProvider());
 
@@ -231,7 +235,6 @@ public class FontAwesomeIconProviderTest
     [InlineData("hospital-alt", "hospital")]
     [InlineData("hospital-symbol", "circle-h")]
     [InlineData("hot-tub", "hot-tub-person")]
-    [InlineData("hourglass-half", "hourglass")]
     [InlineData("house-damage", "house-chimney-crack")]
     [InlineData("hryvnia", "hryvnia-sign")]
     [InlineData("id-card-alt", "id-card-clip")]
@@ -458,6 +461,121 @@ public class FontAwesomeIconProviderTest
         legacyIcon.Should().Be(version6Icon);
     }
 
+    // Font Awesome 6.2 made these legacy names icons again, so the bundled data shows those icons.
+    [Theory]
+    [InlineData("fa-solid fa-people-arrows", "people-arrows", "solid")]
+    [InlineData("fas fa-people-arrows", "people-arrows", "solid")]
+    [InlineData("fa-people-arrows", "people-arrows", null)]
+    [InlineData("fa-solid fa-hourglass-half", "hourglass-half", "solid")]
+    [InlineData("fas fa-hourglass-half", "hourglass-half", "solid")]
+    [InlineData("fa-regular fa-hourglass-half", "hourglass-half", "regular")]
+    [InlineData("far fa-hourglass-half", "hourglass-half", "regular")]
+    [InlineData("fa-hourglass-half", "hourglass-half", null)]
+    public void Legacy_Name_That_Is_An_Icon_Should_Show_That_Icon(string value, string name, string style)
+    {
+        // Act
+        var icon = _iconProvider.GetIcon(value);
+
+        // Assert
+        var expected = BundledIcon(name, style);
+        icon.ViewBox.Should().Be(expected.ViewBox);
+        icon.Path.ToString().Should().Be(expected.Path.ToString());
+    }
+
+    [Fact]
+    public void Every_Listed_Key_Should_Show_The_Icon_Of_That_Name()
+    {
+        var failures = new List<string>();
+        foreach (var key in _iconProvider.Keys)
+        {
+            // Keys have the form "fa-{style} fa-{name}".
+            var parts = key.Split(' ');
+            var style = parts[0].Substring("fa-".Length);
+            var name = parts[1].Substring("fa-".Length);
+            try
+            {
+                if (_iconProvider.GetIcon(key) != BundledIcon(name, style))
+                {
+                    failures.Add($"{key}: shows another icon");
+                }
+            }
+            catch (KeyNotFoundException e)
+            {
+                failures.Add($"{key}: {e.Message}");
+            }
+        }
+
+        failures.Should().BeEmpty();
+    }
+
+    [Fact]
+    public void Every_Legacy_Name_That_Is_Not_An_Icon_Should_Show_Its_Version6_Icon()
+    {
+        var failures = new List<string>();
+        foreach (var (legacy, version6) in FontAwesomeIconKey.LegacyToVersion6)
+        {
+            if (_bundledIcons.Value.TryGetProperty(legacy, out _))
+            {
+                // An icon of that name; Every_Listed_Key_Should_Show_The_Icon_Of_That_Name covers it.
+                continue;
+            }
+
+            if (!_bundledIcons.Value.TryGetProperty(version6, out var target))
+            {
+                failures.Add($"{legacy} -> {version6}: \"{version6}\" is not an icon");
+                continue;
+            }
+
+            var cases = target.GetProperty("svg").EnumerateObject()
+                .Select(svg => (Value: $"fa-{svg.Name} fa-{legacy}", Style: svg.Name))
+                .Prepend((Value: $"fa-{legacy}", Style: null));
+            foreach (var (value, style) in cases)
+            {
+                try
+                {
+                    if (_iconProvider.GetIcon(value) != BundledIcon(version6, style))
+                    {
+                        failures.Add($"{value}: does not show {version6}");
+                    }
+                }
+                catch (KeyNotFoundException e)
+                {
+                    failures.Add($"{value}: {e.Message}");
+                }
+            }
+        }
+
+        failures.Should().BeEmpty();
+    }
+
+    // Font Awesome 6.1 names these icons people-arrows-left-right and hourglass.
+    [Theory]
+    [InlineData("fa-solid fa-people-arrows", "M0 0h1")]
+    [InlineData("fa-people-arrows", "M0 0h1")]
+    [InlineData("fa-solid fa-hourglass-half", "M0 0h2")]
+    [InlineData("fa-hourglass-half", "M0 0h2")]
+    public void Legacy_Name_Should_Show_Version6_Icon_If_Loaded_Data_Has_No_Icon_Of_That_Name(string value, string path)
+    {
+        // Arrange
+        var provider = CustomProvider(("people-arrows-left-right", "M0 0h1"), ("hourglass", "M0 0h2"));
+
+        // Act + Assert
+        provider.GetIcon(value).Path.ToString().Should().Be(path);
+    }
+
+    [Theory]
+    [InlineData("fa-solid fa-hourglass-half", "M0 0h3")]
+    [InlineData("fa-hourglass-half", "M0 0h3")]
+    [InlineData("fa-solid fa-hourglass", "M0 0h2")]
+    public void Legacy_Name_Should_Show_Icon_Of_That_Name_If_Loaded_Data_Has_One(string value, string path)
+    {
+        // Arrange
+        var provider = CustomProvider(("hourglass", "M0 0h2"), ("hourglass-half", "M0 0h3"));
+
+        // Act + Assert
+        provider.GetIcon(value).Path.ToString().Should().Be(path);
+    }
+
     [Theory]
     [InlineData("fa-github-custom")]
     [InlineData("fa-brands fa-github-custom")]
@@ -560,6 +678,36 @@ public class FontAwesomeIconProviderTest
 
         // Act + Assert — exception surfaces on first lookup (Lazy)
         Assert.Throws<InvalidOperationException>(() => provider.GetIcon("fa-anything"));
+    }
+
+    private static JsonElement LoadBundledIcons()
+    {
+        using var stream = new FontAwesomeFreeUtf8JsonStreamProvider().GetUtf8JsonStream();
+        using var document = JsonDocument.Parse(stream);
+        return document.RootElement.Clone();
+    }
+
+    /// <summary>
+    /// Reads the icon straight from the bundled icons.json; without a style, the first one like the provider.
+    /// </summary>
+    private static IconModel BundledIcon(string name, string style)
+    {
+        var svgs = _bundledIcons.Value.GetProperty(name).GetProperty("svg");
+        var svg = style is null ? svgs.EnumerateObject().First().Value : svgs.GetProperty(style);
+        var viewBox = svg.GetProperty("viewBox").EnumerateArray().Select(e => e.GetInt32()).ToArray();
+        return new IconModel(
+            new ViewBoxModel(viewBox[0], viewBox[1], viewBox[2], viewBox[3]),
+            new PathModel(svg.GetProperty("path").GetString())
+        );
+    }
+
+    private static FontAwesomeIconProvider CustomProvider(params (string Name, string Path)[] icons)
+    {
+        var json = "{" + string.Join(",", icons.Select(icon =>
+            $$"""
+            "{{icon.Name}}": { "svg": { "solid": { "path": "{{icon.Path}}", "viewBox": [0, 0, 512, 512] } } }
+            """)) + "}";
+        return FontAwesomeIconProvider.FromStream(new MemoryStream(Encoding.UTF8.GetBytes(json)));
     }
 
     private sealed class TestStreamProvider : IFontAwesomeUtf8JsonStreamProvider

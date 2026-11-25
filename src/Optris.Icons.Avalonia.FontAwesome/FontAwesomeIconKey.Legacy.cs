@@ -1,10 +1,11 @@
 using System.Collections.Generic;
+using Optris.Icons.Avalonia.FontAwesome.Models;
 
 namespace Optris.Icons.Avalonia.FontAwesome;
 
 internal partial class FontAwesomeIconKey
 {
-    private static readonly Dictionary<string, string> _legacyToVersion6 = new()
+    internal static readonly IReadOnlyDictionary<string, string> LegacyToVersion6 = new Dictionary<string, string>
     {
         ["ad"] = "rectangle-ad",
         ["adjust"] = "circle-half-stroke",
@@ -401,10 +402,16 @@ internal partial class FontAwesomeIconKey
         ["window-close"] = "rectangle-xmark",
     };
 
-    private static string SupportLegacy(string value)
+    /// <summary>
+    /// Replaces a Font Awesome 5 name with its Font Awesome 6 name, unless <paramref name="icons"/> has an icon of that name.
+    /// </summary>
+    public void SupportLegacy(IReadOnlyDictionary<string, FontAwesomeIcon> icons)
     {
-        return _legacyToVersion6.TryGetValue(value, out var result)
-            ? result
-            : value;
+        // Since Font Awesome 6.2, some of these names are icons again (hourglass-half, people-arrows),
+        // while older data still needs the map for them.
+        if (!icons.ContainsKey(Value) && LegacyToVersion6.TryGetValue(Value, out var version6Name))
+        {
+            Value = version6Name;
+        }
     }
 }
