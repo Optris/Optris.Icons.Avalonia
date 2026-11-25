@@ -392,9 +392,9 @@ public class FontAwesomeIconProviderTest
     [InlineData("table-tennis", "table-tennis-paddle-ball")]
     [InlineData("tablet-alt", "tablet-screen-button")]
     [InlineData("tablet-android", "tablet")]
-    [InlineData("tachometer", "gauge-simple")]
-    [InlineData("tachometer-alt", "gauge")]
-    [InlineData("tachometer-alt-fast", "gauge")]
+    [InlineData("tachometer", "gauge-simple-high")]
+    [InlineData("tachometer-alt", "gauge-high")]
+    [InlineData("tachometer-alt-fast", "gauge-high")]
     [InlineData("tasks", "list-check")]
     [InlineData("tasks-alt", "bars-progress")]
     [InlineData("telegram-plane", "telegram")]
@@ -420,7 +420,7 @@ public class FontAwesomeIconProviderTest
     [InlineData("tired", "face-tired")]
     [InlineData("tools", "screwdriver-wrench")]
     [InlineData("torah", "scroll-torah")]
-    [InlineData("tram", "train-tram")]
+    [InlineData("tram", "cable-car")]
     [InlineData("transgender-alt", "transgender")]
     [InlineData("trash-alt", "trash-can")]
     [InlineData("trash-restore", "trash-arrow-up")]
@@ -546,6 +546,30 @@ public class FontAwesomeIconProviderTest
         }
 
         failures.Should().BeEmpty();
+    }
+
+    [Fact]
+    public void Legacy_Map_Should_Agree_With_The_Aliases_In_The_Icon_Data()
+    {
+        // Font Awesome lists each old name as an alias of the icon that replaced it.
+        var aliasOwners = new Dictionary<string, string>();
+        foreach (var icon in _bundledIcons.Value.EnumerateObject())
+        {
+            if (icon.Value.TryGetProperty("aliases", out var aliases) && aliases.TryGetProperty("names", out var names))
+            {
+                foreach (var alias in names.EnumerateArray())
+                {
+                    aliasOwners[alias.GetString()] = icon.Name;
+                }
+            }
+        }
+
+        var disagreements = FontAwesomeIconKey.LegacyToVersion6
+            .Where(entry => aliasOwners.TryGetValue(entry.Key, out var owner) && owner != entry.Value)
+            .Select(entry => $"{entry.Key} -> {entry.Value}, but the data lists it as an alias of {aliasOwners[entry.Key]}")
+            .ToList();
+
+        disagreements.Should().BeEmpty();
     }
 
     // Font Awesome 6.1 names these icons people-arrows-left-right and hourglass.
