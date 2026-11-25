@@ -81,7 +81,10 @@ public class FontAwesomeIconProvider : IIconProvider, IIconKeyProvider
         {
             throw new KeyNotFoundException($"FontAwesome icon \"{value}\" not found!");
         }
-        else if (!Icons.TryGetValue(key.Value, out FontAwesomeIcon icon))
+
+        key.SupportLegacy(Icons);
+
+        if (!Icons.TryGetValue(key.Value, out FontAwesomeIcon icon))
         {
             throw new KeyNotFoundException($"FontAwesome icon \"{key.Value}\" not found!");
         }

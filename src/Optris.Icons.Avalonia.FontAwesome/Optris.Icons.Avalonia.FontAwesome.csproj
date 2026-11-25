@@ -9,6 +9,9 @@
     <ItemGroup>
         <EmbeddedResource Include="Assets\icons.json" />
     </ItemGroup>
+    <ItemGroup>
+        <InternalsVisibleTo Include="Optris.Icons.Avalonia.FontAwesome.Test" />
+    </ItemGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\Optris.Icons.Avalonia\Optris.Icons.Avalonia.csproj" />

@@ -52,10 +52,8 @@ internal partial class FontAwesomeIconKey
 
     private static string GetValue(string input)
     {
-        var value = input.Length <= _faKeyPrefix.Length
+        return input.Length <= _faKeyPrefix.Length
             ? string.Empty
             : input.Substring(_faKeyPrefix.Length);
-
-        return SupportLegacy(value);
     }
 }
